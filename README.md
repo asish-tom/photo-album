@@ -5,5 +5,7 @@ It's a fun project did for practice. A combo of go + rest api + swagger + docker
 ```
 git clone https://github.com/asish-tom/photo-album.git
 
+cd photo_album
+
 docker-compose -f photo_album/docker-compose.yml up -d --build kafka web zookeeper
 ```
