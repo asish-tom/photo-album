@@ -1,0 +1,47 @@
+basePath: /
+consumes:
+- application/json
+info:
+  description: Documentation for Album API
+  title: of Album API
+  version: 1.0.0
+paths:
+  /album:
+    get:
+      description: Returns a list of all albums in the system
+      operationId: listAlbums
+      tags:
+      - albums
+    post:
+      description: Returns a 200 in case of success
+      operationId: saveAlbum
+      tags:
+      - album
+  /album/{album_id}/image:
+    get:
+      description: Returns a list of images in the album
+      operationId: listAllImagesOfSelectedImages
+      tags:
+      - images
+    post:
+      operationId: addImageToAlbum
+      summary: Returns a 200 in case of success.
+      tags:
+      - images
+  /album/{album_id}/image/{image_id}:
+    delete:
+      operationId: deleteImageFromAlbum
+      summary: Returns a 200 in case of success.
+      tags:
+      - images
+  /album/{id}:
+    delete:
+      description: Returns a 200 in case of success
+      operationId: deleteAlbum
+      tags:
+      - album
+produces:
+- application/json
+schemes:
+- http
+swagger: "2.0"
