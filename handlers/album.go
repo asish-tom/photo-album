@@ -1,4 +1,3 @@
-// TODO-> Added swagger comments for request parameters.
 package handlers
 
 import (
@@ -17,21 +16,18 @@ type Albums struct {
 // swagger:route GET /album album listAlbums
 // Returns a list of all albums in the system
 // responses:
-//	200:Response
+//	200:ResponseModel
 func (a *Albums) GetAlbums(writer http.ResponseWriter, request *http.Request) {
 	a.l.Println("Handle GET Album")
-	response := &helpers.Response{
+	response := &helpers.ResponseModel{
 		Status:  "failed",
 		Message: "Unknown error",
 	}
+	a.l.Println("Handle GET Albums")
 	la := models.GetAlbums()
 	response.Model = la
 	response.Status = "success"
-	if len(la) == 0 {
-		response.Message = "No albums are available in the system. Consider creating one"
-	} else {
-		response.Message = "Retrieved albums successfully"
-	}
+	response.Message = ""
 	response.ToResponse(writer)
 	return
 }
@@ -39,10 +35,10 @@ func (a *Albums) GetAlbums(writer http.ResponseWriter, request *http.Request) {
 // swagger:route POST /album album saveAlbum
 // Returns a 200 in case of success
 // responses:
-//	200:Response
+//	200:ResponseModel
 func (a *Albums) AddAlbum(writer http.ResponseWriter, request *http.Request) {
 	a.l.Println("Handle POST Album")
-	response := &helpers.Response{
+	response := &helpers.ResponseModel{
 		Status:  "failed",
 		Message: "Unknown error",
 	}
@@ -63,7 +59,7 @@ func (a *Albums) AddAlbum(writer http.ResponseWriter, request *http.Request) {
 	alb.Id = id
 	response.Model = alb
 	response.Status = "success"
-	response.Message = "Added album successfully"
+	response.Message = ""
 	response.ToResponse(writer)
 	return
 }
@@ -71,10 +67,10 @@ func (a *Albums) AddAlbum(writer http.ResponseWriter, request *http.Request) {
 // swagger:route DELETE /album/{id} album deleteAlbum
 // Returns a 200 in case of success
 // responses:
-//	200:Response
+//	200:ResponseModel
 func (a *Albums) DeleteAlbum(writer http.ResponseWriter, request *http.Request) {
-	a.l.Println("Handle DELETE Album")
-	response := &helpers.Response{
+	a.l.Println("Handle Delete Album")
+	response := &helpers.ResponseModel{
 		Status:  "failed",
 		Message: "Unknown error",
 	}
@@ -92,7 +88,7 @@ func (a *Albums) DeleteAlbum(writer http.ResponseWriter, request *http.Request) 
 		return
 	}
 	response.Status = "success"
-	response.Message = "Deleted album successfully"
+	response.Message = "Album deleted"
 	response.ToResponse(writer)
 	return
 }

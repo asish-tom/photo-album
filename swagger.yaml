@@ -1,28 +1,9 @@
 basePath: /
 consumes:
 - application/json
-definitions:
-  Response:
-    description: Wrapper for all responses form the system
-    properties:
-      message:
-        description: Description on what happened to the request
-        type: string
-        x-go-name: Message
-      model:
-        description: Data returned from API as part of request
-        type: object
-        x-go-name: Model
-      status:
-        description: Status of the request
-        type: string
-        x-go-name: Status
-    type: object
-    x-go-package: photo_album/helpers
-host: localhost:9090
 info:
-  description: RestfulAPI for implementing photo album
-  title: Documentation for Photo Album MicroService
+  description: Documentation for Album API
+  title: of Album API
   version: 1.0.0
 paths:
   /album:
@@ -31,9 +12,7 @@ paths:
       operationId: listAlbums
       responses:
         "200":
-          description: Response
-          schema:
-            $ref: '#/definitions/Response'
+          $ref: '#/responses/ResponseModel'
       tags:
       - album
     post:
@@ -41,9 +20,7 @@ paths:
       operationId: saveAlbum
       responses:
         "200":
-          description: Response
-          schema:
-            $ref: '#/definitions/Response'
+          $ref: '#/responses/ResponseModel'
       tags:
       - album
   /album/{album_id}/image:
@@ -52,18 +29,14 @@ paths:
       operationId: listAllImagesOfSelectedImages
       responses:
         "200":
-          description: Response
-          schema:
-            $ref: '#/definitions/Response'
+          $ref: '#/responses/ResponseModel'
       tags:
       - image
     post:
       operationId: addImageToAlbum
       responses:
         "200":
-          description: Response
-          schema:
-            $ref: '#/definitions/Response'
+          $ref: '#/responses/ResponseModel'
       summary: Returns a 200 in case of success.
       tags:
       - image
@@ -72,9 +45,7 @@ paths:
       operationId: deleteImageFromAlbum
       responses:
         "200":
-          description: Response
-          schema:
-            $ref: '#/definitions/Response'
+          $ref: '#/responses/ResponseModel'
       summary: Returns a 200 in case of success.
       tags:
       - image
@@ -84,18 +55,19 @@ paths:
       operationId: deleteAlbum
       responses:
         "200":
-          description: Response
-          schema:
-            $ref: '#/definitions/Response'
+          $ref: '#/responses/ResponseModel'
       tags:
       - album
 produces:
 - application/json
 responses:
-  ResponseWrapper:
-    description: Main wrapper for response
+  ResponseModel:
+    headers:
+      Message:
+        type: string
+      Model: {}
     schema:
-      $ref: '#/definitions/Response'
+      type: object
 schemes:
 - http
 swagger: "2.0"
