@@ -12,7 +12,7 @@ type Albums struct {
 	l *log.Logger
 }
 
-// swagger:route GET /album albums listAlbums
+// swagger:route GET /album album listAlbums
 // Returns a list of all albums in the system
 func (a *Albums) GetAlbums(writer http.ResponseWriter, request *http.Request) {
 	a.l.Println("Handle GET Albums")
