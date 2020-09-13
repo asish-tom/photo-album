@@ -11,7 +11,7 @@ paths:
       description: Returns a list of all albums in the system
       operationId: listAlbums
       tags:
-      - albums
+      - album
     post:
       description: Returns a 200 in case of success
       operationId: saveAlbum
@@ -22,18 +22,18 @@ paths:
       description: Returns a list of images in the album
       operationId: listAllImagesOfSelectedImages
       tags:
-      - images
+      - image
     post:
       operationId: addImageToAlbum
       summary: Returns a 200 in case of success.
       tags:
-      - images
+      - image
   /album/{album_id}/image/{image_id}:
     delete:
       operationId: deleteImageFromAlbum
       summary: Returns a 200 in case of success.
       tags:
-      - images
+      - image
   /album/{id}:
     delete:
       description: Returns a 200 in case of success

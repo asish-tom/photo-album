@@ -41,6 +41,10 @@ func main() {
 	deleteRouter := sm.Methods(http.MethodDelete).Subrouter()
 	deleteRouter.HandleFunc("/album/{album_id:[0-9]+}", albumHandler.DeleteAlbum)
 	deleteRouter.HandleFunc("/album/{album_id:[0-9]+}/image/{image_id:[0-9]+}", imageHandler.DeleteImage)
+	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
+	sh := middleware.Redoc(opts, nil)
+	getRouter.Handle("/docs", sh)
+	getRouter.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 	server := http.Server{
 		Addr:         ":9090",
 		Handler:      sm,
@@ -62,8 +66,5 @@ func main() {
 	l.Println(sig)
 	tc, _ := context.WithTimeout(context.Background(), 30*time.Second)
 	server.Shutdown(tc)
-	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
-	sh := middleware.Redoc(opts, nil)
-	getRouter.Handle("/", sh)
-	getRouter.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
+
 }

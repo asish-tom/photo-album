@@ -13,7 +13,7 @@ type Images struct {
 	l *log.Logger
 }
 
-// swagger:route GET /album/{album_id}/image images listAllImagesOfSelectedImages
+// swagger:route GET /album/{album_id}/image image listAllImagesOfSelectedImages
 // Returns a list of images in the album
 func (i *Images) GetImages(writer http.ResponseWriter, request *http.Request) {
 	i.l.Println("Handle Get image")
@@ -33,7 +33,7 @@ func (i *Images) GetImages(writer http.ResponseWriter, request *http.Request) {
 
 }
 
-// swagger:route POST /album/{album_id}/image images addImageToAlbum
+// swagger:route POST /album/{album_id}/image image addImageToAlbum
 // Returns a 200 in case of success.
 func (i *Images) AddImage(writer http.ResponseWriter, request *http.Request) {
 	i.l.Println("Handle post image")
@@ -58,7 +58,7 @@ func (i *Images) AddImage(writer http.ResponseWriter, request *http.Request) {
 	defer helpers.PublishToKafka("albumNotification", data)
 }
 
-// swagger:route Delete /album/{album_id}/image/{image_id} images deleteImageFromAlbum
+// swagger:route Delete /album/{album_id}/image/{image_id} image deleteImageFromAlbum
 // Returns a 200 in case of success.
 func (a *Images) DeleteImage(writer http.ResponseWriter, request *http.Request) {
 	vars := mux.Vars(request)
