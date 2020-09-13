@@ -6,9 +6,11 @@ package models
 import (
 	"encoding/json"
 	"errors"
+	"github.com/go-playground/validator/v10"
 	"io"
 )
 
+// TODO-> Added validations for file
 type Image struct {
 	Id          int    `json:"id"`
 	Name        string `json:"name"`
@@ -18,6 +20,11 @@ type Image struct {
 }
 
 type Images []*Image
+
+func (i *Image) Validate() error {
+	validate := validator.New()
+	return validate.Struct(i)
+}
 
 func (i *Images) ToJSON(w io.Writer) error {
 	e := json.NewEncoder(w)
@@ -69,7 +76,7 @@ func DeleteImageById(imageId int) (err error) {
 		err = errors.New("album-not-found")
 		return
 	}
-	for i := searchIndex; i < len(imageList); i++ {
+	for i := searchIndex; i < len(imageList)-1; i++ {
 		imageList[i] = imageList[i+1]
 	}
 	imageList[len(imageList)-1] = nil

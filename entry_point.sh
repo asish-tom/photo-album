@@ -1,3 +1,2 @@
 #!/bin/sh
-sh -c "go build -o main"
-sh -c  "/app/main"
+sh -c "go run main.go"

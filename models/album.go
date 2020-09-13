@@ -39,9 +39,10 @@ func GetAlbums() Albums {
 	return queryList
 }
 
-func AddAlbum(a *Album) {
+func AddAlbum(a *Album) int {
 	a.Id = getNextAlbumId()
 	albumList = append(albumList, a)
+	return a.Id
 }
 
 func DeleteAlbumById(id int) (err error) {
@@ -64,7 +65,7 @@ func DeleteAlbumById(id int) (err error) {
 		}
 	}
 	// deleting album
-	for i := searchIndex; i < len(albumList); i++ {
+	for i := searchIndex; i < len(albumList)-1; i++ {
 		albumList[i] = albumList[i+1]
 	}
 	albumList[len(albumList)-1] = nil
