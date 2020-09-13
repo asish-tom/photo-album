@@ -23,11 +23,10 @@ func (a *Albums) GetAlbums(writer http.ResponseWriter, request *http.Request) {
 		Status:  "failed",
 		Message: "Unknown error",
 	}
-	a.l.Println("Handle GET Albums")
 	la := models.GetAlbums()
 	response.Model = la
 	response.Status = "success"
-	response.Message = ""
+	response.Message = "Retrieved albums successfully"
 	response.ToResponse(writer)
 	return
 }
@@ -59,7 +58,7 @@ func (a *Albums) AddAlbum(writer http.ResponseWriter, request *http.Request) {
 	alb.ID = id
 	response.Model = alb
 	response.Status = "success"
-	response.Message = ""
+	response.Message = "Added album successfully"
 	response.ToResponse(writer)
 	return
 }
@@ -69,7 +68,7 @@ func (a *Albums) AddAlbum(writer http.ResponseWriter, request *http.Request) {
 // responses:
 //	200:ResponseModel
 func (a *Albums) DeleteAlbum(writer http.ResponseWriter, request *http.Request) {
-	a.l.Println("Handle Delete Album")
+	a.l.Println("Handle DELETE Album")
 	response := &helpers.ResponseModel{
 		Status:  "failed",
 		Message: "Unknown error",
@@ -88,7 +87,7 @@ func (a *Albums) DeleteAlbum(writer http.ResponseWriter, request *http.Request) 
 		return
 	}
 	response.Status = "success"
-	response.Message = "Album deleted"
+	response.Message = "Deleted album successfully"
 	response.ToResponse(writer)
 	return
 }
