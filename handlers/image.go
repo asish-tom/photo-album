@@ -18,7 +18,7 @@ type Images struct {
 // responses:
 //	200:ResponseModel
 func (i *Images) GetImages(writer http.ResponseWriter, request *http.Request) {
-	i.l.Println("Handle Get album images")
+	i.l.Println("Handle GET album images")
 	response := &helpers.ResponseModel{
 		Status:  "failed",
 		Message: "Unknown error",
@@ -31,7 +31,7 @@ func (i *Images) GetImages(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	li := models.GetImagesByAlbumID(albumId)
-	response.Message = ""
+	response.Message = "Retrieved album images successfully"
 	response.Status = "success"
 	response.Model = li
 	response.ToResponse(writer)
@@ -73,7 +73,7 @@ func (i *Images) AddImage(writer http.ResponseWriter, request *http.Request) {
 		"image_id": id,
 		"event":    "Added Image",
 	}
-	response.Message = ""
+	response.Message = "Added image successfully"
 	response.Status = "success"
 	response.Model = img
 	response.ToResponse(writer)
@@ -107,7 +107,7 @@ func (i *Images) DeleteImage(writer http.ResponseWriter, request *http.Request) 
 		"event":    "Deleted Image",
 	}
 	defer helpers.PublishToKafka("albumNotification", data)
-	response.Message = "Image deleted successfully"
+	response.Message = "Deleted image successfully"
 	response.Status = "success"
 	response.ToResponse(writer)
 	defer helpers.PublishToKafka("albumNotification", data)
