@@ -1,8 +1,9 @@
-// Package classification of Album API
+//  Documentation for Photo Album MicroService
 //
-// Documentation for Album API
+//	RestfulAPI for implementing photo album
 //
-//	Schemes: http
+//  Schemes: http
+//  Host: localhost:9090
 //	BasePath: /
 //	Version: 1.0.0
 //
@@ -27,6 +28,7 @@ import (
 	"time"
 )
 
+// TODO-> Decouple image from album
 func main() {
 	l := log.New(os.Stdout, "album-api", log.LstdFlags)
 	albumHandler := handlers.NewAlbum(l)

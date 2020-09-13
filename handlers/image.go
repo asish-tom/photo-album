@@ -16,10 +16,10 @@ type Images struct {
 // swagger:route GET /album/{album_id}/image image listAllImagesOfSelectedImages
 // Returns a list of images in the album
 // responses:
-//	200:ResponseModel
+//	200:Response
 func (i *Images) GetImages(writer http.ResponseWriter, request *http.Request) {
 	i.l.Println("Handle GET album images")
-	response := &helpers.ResponseModel{
+	response := &helpers.Response{
 		Status:  "failed",
 		Message: "Unknown error",
 	}
@@ -31,7 +31,11 @@ func (i *Images) GetImages(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	li := models.GetImagesByAlbumID(albumId)
-	response.Message = "Retrieved album images successfully"
+	if len(li) == 0 {
+		response.Message = "Retrieved albums is  empty"
+	} else {
+		response.Message = "Retrieved album images successfully"
+	}
 	response.Status = "success"
 	response.Model = li
 	response.ToResponse(writer)
@@ -42,10 +46,10 @@ func (i *Images) GetImages(writer http.ResponseWriter, request *http.Request) {
 // swagger:route POST /album/{album_id}/image image addImageToAlbum
 // Returns a 200 in case of success.
 // responses:
-//	200:ResponseModel
+//	200:Response
 func (i *Images) AddImage(writer http.ResponseWriter, request *http.Request) {
 	i.l.Println("Handle POST album image")
-	response := &helpers.ResponseModel{
+	response := &helpers.Response{
 		Status:  "failed",
 		Message: "Unknown error",
 	}
@@ -63,6 +67,13 @@ func (i *Images) AddImage(writer http.ResponseWriter, request *http.Request) {
 		response.ToResponse(writer)
 		return
 	}
+	err = img.Validate()
+	if err != nil {
+		response.Message = "Unable to validate json"
+		response.ToResponse(writer)
+		return
+	}
+
 	id, err := models.AddImage(img, albumId)
 	if err != nil {
 		response.Message = err.Error()
@@ -83,9 +94,9 @@ func (i *Images) AddImage(writer http.ResponseWriter, request *http.Request) {
 // swagger:route Delete /album/{album_id}/image/{image_id} image deleteImageFromAlbum
 // Returns a 200 in case of success.
 // responses:
-//	200:ResponseModel
+//	200:Response
 func (i *Images) DeleteImage(writer http.ResponseWriter, request *http.Request) {
-	response := &helpers.ResponseModel{
+	response := &helpers.Response{
 		Status:  "failed",
 		Message: "Unknown error",
 	}
