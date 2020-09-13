@@ -39,9 +39,10 @@ func GetAlbums() Albums {
 	return queryList
 }
 
-func AddAlbum(a *Album) {
+func AddAlbum(a *Album) int {
 	a.Id = getNextAlbumId()
 	albumList = append(albumList, a)
+	return a.Id
 }
 
 func DeleteAlbumById(id int) (err error) {

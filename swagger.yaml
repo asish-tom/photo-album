@@ -10,27 +10,42 @@ paths:
     get:
       description: Returns a list of all albums in the system
       operationId: listAlbums
+      responses:
+        "200":
+          $ref: '#/responses/ResponseModel'
       tags:
       - album
     post:
       description: Returns a 200 in case of success
       operationId: saveAlbum
+      responses:
+        "200":
+          $ref: '#/responses/ResponseModel'
       tags:
       - album
   /album/{album_id}/image:
     get:
       description: Returns a list of images in the album
       operationId: listAllImagesOfSelectedImages
+      responses:
+        "200":
+          $ref: '#/responses/ResponseModel'
       tags:
       - image
     post:
       operationId: addImageToAlbum
+      responses:
+        "200":
+          $ref: '#/responses/ResponseModel'
       summary: Returns a 200 in case of success.
       tags:
       - image
   /album/{album_id}/image/{image_id}:
     delete:
       operationId: deleteImageFromAlbum
+      responses:
+        "200":
+          $ref: '#/responses/ResponseModel'
       summary: Returns a 200 in case of success.
       tags:
       - image
@@ -38,10 +53,21 @@ paths:
     delete:
       description: Returns a 200 in case of success
       operationId: deleteAlbum
+      responses:
+        "200":
+          $ref: '#/responses/ResponseModel'
       tags:
       - album
 produces:
 - application/json
+responses:
+  ResponseModel:
+    headers:
+      Message:
+        type: string
+      Model: {}
+    schema:
+      type: object
 schemes:
 - http
 swagger: "2.0"
