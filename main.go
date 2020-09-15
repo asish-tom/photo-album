@@ -25,11 +25,13 @@ import (
 	"os"
 	"os/signal"
 	"photo_album/handlers"
+	"photo_album/models"
 	"time"
 )
 
 // TODO-> Decouple image from album
 func main() {
+	models.DbConnect()
 	l := log.New(os.Stdout, "album-api", log.LstdFlags)
 	albumHandler := handlers.NewAlbum(l)
 	imageHandler := handlers.NewImage(l)
@@ -47,6 +49,8 @@ func main() {
 	sh := middleware.Redoc(opts, nil)
 	getRouter.Handle("/docs", sh)
 	getRouter.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
+	getRouter.HandleFunc("/health", handlers.HealthHandler)
+	getRouter.HandleFunc("/readiness", handlers.HealthHandler)
 	server := http.Server{
 		Addr:         ":9090",
 		Handler:      sm,

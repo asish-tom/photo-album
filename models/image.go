@@ -7,16 +7,18 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/go-playground/validator/v10"
+	"gorm.io/gorm"
 	"io"
 )
 
 // TODO-> Added validations for file
 type Image struct {
-	Id          int    `json:"id"`
+	gorm.Model  `gorm:"embedded"`
 	Name        string `json:"name"`
 	Path        string `json:"path"`
 	Description string `json:"description"`
-	AlbumID     int    `json:"-"`
+	AlbumID     uint   `json:"-"`
+	ID          uint   `json:"id"`
 }
 
 type Images []*Image
@@ -36,76 +38,34 @@ func (i *Image) FromJSON(r io.Reader) error {
 	return d.Decode(i)
 }
 
-func AddImage(i *Image, albumId int) (id int, err error) {
-	i.Id = getNextImageId()
+func AddImage(i *Image, albumId uint) (id uint, err error) {
 	al, err := GetAlbumById(albumId)
 	if err != nil {
+		err = errors.New("Album dose not exists")
 		return
 	}
-	id = i.Id
-	i.AlbumID = al.Id
-	imageList = append(imageList, i)
+	id = i.ID
+	i.AlbumID = al.ID
+	txn := gc.crDB.Create(&i)
+	if txn.Error != nil {
+		return 0, err
+	}
+	id = i.ID
 	return
 }
 
-func GetImage() Images {
-	return imageList
-}
-
-func GetImageById(imageId int) (image Image) {
-	searchIndex := -1
-	for i, each := range imageList {
-		if each.Id == imageId {
-			searchIndex = i
-		}
-	}
-	if searchIndex > -1 {
-		image = *imageList[searchIndex]
+func DeleteImageById(imageId uint) (err error) {
+	var i = &Image{}
+	txn := gc.crDB.Unscoped().Delete(&i, imageId)
+	if txn.Error != nil {
+		err = txn.Error
+	} else if txn.RowsAffected == 0 {
+		err = errors.New("Image dose not exists")
 	}
 	return
-}
-
-func DeleteImageById(imageId int) (err error) {
-	searchIndex := -1
-	for i, each := range imageList {
-		if each.Id == imageId {
-			searchIndex = i
-		}
-	}
-	if searchIndex == -1 {
-		err = errors.New("album-not-found")
-		return
-	}
-	for i := searchIndex; i < len(imageList)-1; i++ {
-		imageList[i] = imageList[i+1]
-	}
-	imageList[len(imageList)-1] = nil
-	imageList = imageList[:len(imageList)-1]
-	return
-}
-
-func getNextImageId() int {
-	id := 0
-	if len(imageList) > 0 {
-		id = imageList[len(imageList)-1].Id
-	}
-	return id + 1
-}
-
-var imageList = []*Image{
-	&Image{
-		Id:          1,
-		Name:        "Image-1",
-		AlbumID:     1,
-		Description: "Sample Image",
-	},
 }
 
 func GetImagesByAlbumID(albumId int) (imgList Images) {
-	for _, each := range imageList {
-		if each.AlbumID == albumId {
-			imgList = append(imgList, each)
-		}
-	}
+	_ = gc.crDB.Where("album_id= ? ", albumId).Find(&imgList)
 	return
 }

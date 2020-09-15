@@ -74,7 +74,7 @@ func (i *Images) AddImage(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	id, err := models.AddImage(img, albumId)
+	id, err := models.AddImage(img, uint(albumId))
 	if err != nil {
 		response.Message = err.Error()
 		response.ToResponse(writer)
@@ -107,7 +107,7 @@ func (i *Images) DeleteImage(writer http.ResponseWriter, request *http.Request) 
 		response.ToResponse(writer)
 		return
 	}
-	err = models.DeleteImageById(id)
+	err = models.DeleteImageById(uint(id))
 	if err != nil {
 		response.Message = "Unable to find the image"
 		response.ToResponse(writer)

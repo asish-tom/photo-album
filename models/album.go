@@ -5,13 +5,15 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/go-playground/validator/v10"
+	"gorm.io/gorm"
 	"io"
 )
 
 type Album struct {
-	Id          int    `json:"id"`
+	gorm.Model  `gorm:"embedded"`
 	Name        string `json:"name" validate:"required"`
 	Description string `json:"description" validate:"required"`
+	ID          uint
 }
 
 type Albums []*Album
@@ -31,80 +33,47 @@ func (a *Album) Validate() error {
 	return validate.Struct(a)
 }
 
-func GetAlbums() Albums {
-	var queryList []*Album
-	for _, each := range albumList {
-		queryList = append(queryList, each)
-	}
-	return queryList
+func GetAlbums() (albs Albums) {
+	_ = gc.crDB.Find(&albs)
+	return
 }
 
-func AddAlbum(a *Album) int {
-	a.Id = getNextAlbumId()
-	albumList = append(albumList, a)
-	return a.Id
+func AddAlbum(a *Album) uint {
+	_ = gc.crDB.Create(&a)
+	return a.ID
 }
 
-func DeleteAlbumById(id int) (err error) {
-	searchIndex := -1
-	// searching for the album
-	for i, each := range albumList {
-		if each.Id == id {
-			searchIndex = i
-		}
-	}
-	if searchIndex == -1 {
-		err = errors.New("album-not-found")
+func DeleteAlbumById(id uint) (err error) {
+
+	images := Images{}
+	txn := gc.crDB.Where("album_id= ? ", id).Find(&images)
+	if txn.Error != nil {
+		err = txn.Error
 		return
 	}
-	// searching if album contains image
-	for _, each := range imageList {
-		if each.AlbumID == albumList[searchIndex].Id {
-			err = errors.New("images are associated with album")
-			return
-		}
+	if len(images) > 0 {
+		err = errors.New("images are associated with album")
 	}
+
 	// deleting album
-	for i := searchIndex; i < len(albumList)-1; i++ {
-		albumList[i] = albumList[i+1]
+	alb := Album{}
+	txn = gc.crDB.Unscoped().Delete(&alb, id)
+	if txn.Error != nil {
+		err = txn.Error
+	} else if txn.RowsAffected == 0 {
+		err = errors.New("Album dose not exists")
 	}
-	albumList[len(albumList)-1] = nil
-	albumList = albumList[:len(albumList)-1]
+	print(txn.RowsAffected)
 	return
 }
 
-func GetAlbumById(id int) (album Album, err error) {
-	searchIndex := -1
-	for i, each := range albumList {
-		if each.Id == id {
-			searchIndex = i
-		}
+func GetAlbumById(id uint) (album Album, err error) {
+	alb := Album{
+		ID: id,
 	}
-	if searchIndex == -1 {
-		err = errors.New("album-not-found")
-		return
+	txn := gc.crDB.First(&alb)
+	if txn.Error != nil {
+		err = txn.Error
 	}
-	album = *albumList[searchIndex]
 	return
-}
-
-func getNextAlbumId() int {
-	id := 0
-	if len(albumList) > 0 {
-		id = albumList[len(albumList)-1].Id
-	}
-	return id + 1
-}
-
-var albumList = []*Album{
-	{
-		Id:          1,
-		Name:        "Album1",
-		Description: "Sample album 1",
-	},
-	{
-		Id:          2,
-		Name:        "Album2",
-		Description: "Sample album2",
-	},
 }

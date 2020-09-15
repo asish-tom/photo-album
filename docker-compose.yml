@@ -6,8 +6,10 @@ services:
       - "9090:9090"
     links:
       - kafka
+      - db
     volumes:
       - ".:/app:rw"
+
   kafka:
     image: wurstmeister/kafka
     restart: on-failure:3
@@ -31,3 +33,17 @@ services:
     image: wurstmeister/zookeeper
     ports:
       - "2181:2181"
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root@123
+      MYSQL_DATABASE: photo-album
+      MYSQL_USER: photo-album
+      MYSQL_PASSWORD: photo-album
+    volumes:
+      - /Users/asishtom/go_projects/db:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
