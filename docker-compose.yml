@@ -4,46 +4,36 @@ services:
     build: .
     ports:
       - "9090:9090"
-    links:
-      - kafka
-      - db
     volumes:
       - ".:/app:rw"
+    networks:
+      - backend
 
   kafka:
-    image: wurstmeister/kafka
+    build: ./kafka
     restart: on-failure:3
-    links:
-      - zookeeper
     ports:
       - "9092:9092"
       - "9093:9093"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_CREATE_TOPICS: 'albumNotification:1:1' # topic:partition:replicas
-      KAFKA_DELETE_TOPIC_ENABLE: 'true'
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
-      KAFKA_MESSAGE_MAX_BYTES: 200000000
-      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092,OUTSIDE://localhost:9094
-      KAFKA_LISTENERS: INSIDE://:9092,OUTSIDE://:9094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+    networks:
+      - backend
+
   zookeeper:
-    image: wurstmeister/zookeeper
+    build: ./zookeeper
     ports:
       - "2181:2181"
+    networks:
+      - backend
+
   db:
     image: mysql
-    command: --default-authentication-plugin=mysql_native_password
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root@123
-      MYSQL_DATABASE: photo-album
-      MYSQL_USER: photo-album
-      MYSQL_PASSWORD: photo-album
     volumes:
-      - /Users/asishtom/go_projects/db:/var/lib/mysql
+      - ../db:/var/lib/mysql
     ports:
       - "3306:3306"
-
+    networks:
+      - backend
+networks:
+  backend:
+    driver: bridge

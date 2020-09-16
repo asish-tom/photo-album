@@ -50,7 +50,7 @@ func main() {
 	getRouter.Handle("/docs", sh)
 	getRouter.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 	getRouter.HandleFunc("/health", handlers.HealthHandler)
-	getRouter.HandleFunc("/readiness", handlers.HealthHandler)
+	getRouter.HandleFunc("/readiness", handlers.ReadinessHandler)
 	server := http.Server{
 		Addr:         ":9090",
 		Handler:      sm,
