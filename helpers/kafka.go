@@ -2,8 +2,12 @@ package helpers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/Shopify/sarama"
+	"os"
 )
+
+var kafkaHost string
 
 func PublishToKafka(topic string, data interface{}) {
 	config := sarama.NewConfig()
@@ -12,12 +16,10 @@ func PublishToKafka(topic string, data interface{}) {
 	config.Producer.Return.Successes = true
 	config.Producer.Return.Errors = true
 
-	// brokers := []string{"192.168.59.103:9092"}
-	brokers := []string{"kafka:9092"}
+	brokers := []string{kafkaHost + ":9092"}
 	producer, err := sarama.NewSyncProducer(brokers, config)
 	if err != nil {
 
-		// Should not reach here
 		panic(err)
 	}
 	defer func() {
@@ -37,4 +39,12 @@ func PublishToKafka(topic string, data interface{}) {
 		panic(err)
 	}
 
+}
+
+func init() {
+	kafkaHost = "localhost"
+	fmt.Print()
+	if os.Getenv("KAFKA_HOST") != "" {
+		kafkaHost = os.Getenv("KAFKA_HOST")
+	}
 }

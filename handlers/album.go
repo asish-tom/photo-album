@@ -60,7 +60,7 @@ func (a *Albums) AddAlbum(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	id := models.AddAlbum(alb)
-	alb.Id = id
+	alb.ID = id
 	response.Model = alb
 	response.Status = "success"
 	response.Message = "Added album successfully"
@@ -85,7 +85,7 @@ func (a *Albums) DeleteAlbum(writer http.ResponseWriter, request *http.Request) 
 		response.ToResponse(writer)
 		return
 	}
-	err = models.DeleteAlbumById(id)
+	err = models.DeleteAlbumById(uint(id))
 	if err != nil {
 		response.Message = err.Error()
 		response.ToResponse(writer)
