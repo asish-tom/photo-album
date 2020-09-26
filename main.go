@@ -26,10 +26,12 @@ import (
 	"os/signal"
 	"photo_album/handlers"
 	"photo_album/models"
+	"syscall"
 	"time"
 )
 
 // TODO-> Decouple image from album
+// The controller, micro service execution starts from here
 func main() {
 	models.DbConnect()
 	l := log.New(os.Stdout, "album-api", log.LstdFlags)
@@ -59,18 +61,19 @@ func main() {
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  120 * time.Second,
 	}
+	sigChan := make(chan os.Signal)
+	signal.Notify(sigChan, os.Interrupt, syscall.SIGINT, syscall.SIGTERM, os.Kill)
 	go func() {
 		err := server.ListenAndServe()
 		if err != nil {
 			l.Fatal(err)
 		}
 	}()
-	sigChan := make(chan os.Signal)
-	signal.Notify(sigChan, os.Interrupt)
-	signal.Notify(sigChan, os.Kill)
 	sig := <-sigChan
 	l.Println(sig)
-	tc, _ := context.WithTimeout(context.Background(), 30*time.Second)
-	server.Shutdown(tc)
+	tc, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	if err := server.Shutdown(tc); err != nil {
+		log.Fatalf("Server Shutdown Failed:%+v", err)
+	}
 
 }
