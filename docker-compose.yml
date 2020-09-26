@@ -43,7 +43,7 @@ services:
       MYSQL_USER: photo-album
       MYSQL_PASSWORD: photo-album
     volumes:
-      - /Users/asishtom/go_projects/db:/var/lib/mysql
+      - ../db:/var/lib/mysql
     ports:
       - "3306:3306"
 
