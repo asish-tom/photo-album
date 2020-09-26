@@ -9,3 +9,8 @@ cd photo_album
 
 docker-compose -f photo_album/docker-compose.yml up -d --build kafka web zookeeper
 ```
+
+# Documention
+```
+Documention is hosted on the path /docs
+```
