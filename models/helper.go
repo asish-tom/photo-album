@@ -31,4 +31,5 @@ func init() {
 	if os.Getenv("DB_HOST") != "" {
 		host = os.Getenv("DB_HOST")
 	}
+	fmt.Println(host)
 }

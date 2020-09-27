@@ -8,7 +8,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
 FROM alpine:latest
 RUN apk --no-cache add ca-certificates
-ENV KAFKA_HOST kafka
+ENV KAFKA_HOST 172.17.0.2
 ENV DB_HOST db
 WORKDIR /root/
 COPY --from=builder /app/main .

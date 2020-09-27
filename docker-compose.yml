@@ -1,39 +1,58 @@
 version: '3.0'
 services:
   web:
+    image: asishtom/web
     restart: always
     build: .
+    environment:
+      KAFKA_HOST: 172.17.0.2
+      DB_HOST: db
     ports:
       - "9090:9090"
     links:
-      - kafka
       - db
-    volumes:
-      - ".:/app:rw"
+      - kafka_cluser
 
-  kafka:
+  kafka_broker:
     image: wurstmeister/kafka
-    restart: on-failure:3
-    links:
-      - zookeeper
+    restart: always
     ports:
       - "9092:9092"
       - "9093:9093"
+      - "9094:9094"
     environment:
-      KAFKA_BROKER_ID: 1
       KAFKA_CREATE_TOPICS: 'albumNotification:1:1' # topic:partition:replicas
-      KAFKA_DELETE_TOPIC_ENABLE: 'true'
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_DELETE_TOPIC_ENABLE: "true"
+      ALLOW_PLAINTEXT_LISTENER: "true"
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_ADVERTISED_HOST_NAME: 172.17.0.2
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
       KAFKA_MESSAGE_MAX_BYTES: 200000000
-      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092,OUTSIDE://localhost:9094
-      KAFKA_LISTENERS: INSIDE://:9092,OUTSIDE://:9094
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+#      KAFKA_LISTENERS: "INSIDE_PLAINTEXT://0.0.0.0:9092,OUTSIDE_PLAINTEXT://kafka_cluser:9093"
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+    links:
+      - zookeeper
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+      - .:/tmp/kafka-logs
+      - .:/tmp/zookeeper
   zookeeper:
-    image: wurstmeister/zookeeper
+    image: bitnami/zookeeper
+    restart: always
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: "true"
     ports:
       - "2181:2181"
+      - "2888:2888"
+      - "3888:3888"
+    links:
+      - kafka_cluser
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - .:/tmp/kafka-logs
+      - .:/tmp/zookeeper
   db:
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
@@ -44,7 +63,7 @@ services:
       MYSQL_USER: photo-album
       MYSQL_PASSWORD: photo-album
     volumes:
-      - ../db:/var/lib/mysql
+      - ./db:/var/lib/mysql
     ports:
       - "3306:3306"
 

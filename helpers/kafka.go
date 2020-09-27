@@ -47,4 +47,5 @@ func init() {
 	if os.Getenv("KAFKA_HOST") != "" {
 		kafkaHost = os.Getenv("KAFKA_HOST")
 	}
+	fmt.Println(kafkaHost)
 }
